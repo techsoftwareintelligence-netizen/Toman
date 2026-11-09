@@ -1,0 +1,6 @@
+{
+  "name": "TOMAN Messaging App",
+  "description": "Sleek, high-performance mobile messaging app with secure authentication, real-time rich chat feeds, call management, and custom settings.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

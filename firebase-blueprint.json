@@ -1,0 +1,105 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile document storing authentication metadata and account status",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "username": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["admin", "user"] },
+        "isDisabled": { "type": "boolean" },
+        "avatar": { "type": "string" },
+        "status": { "type": "string" },
+        "isOnline": { "type": "boolean" },
+        "lastSeen": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["uid", "username", "name", "role", "isDisabled"]
+    },
+    "UsernameMapping": {
+      "title": "Username Mapping",
+      "description": "Lookup document connecting unique username to user email and uid",
+      "type": "object",
+      "properties": {
+        "username": { "type": "string" },
+        "userId": { "type": "string" },
+        "email": { "type": "string" }
+      },
+      "required": ["username", "userId", "email"]
+    },
+    "ChatThread": {
+      "title": "Chat Thread",
+      "description": "Direct or group chat conversation document",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "isGroup": { "type": "boolean" },
+        "name": { "type": "string" },
+        "avatar": { "type": "string" },
+        "memberIds": { "type": "array" },
+        "createdBy": { "type": "string" },
+        "lastMessageText": { "type": "string" },
+        "lastMessageTimestamp": { "type": "string" },
+        "lastMessageSenderId": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["isGroup", "memberIds", "createdBy"]
+    },
+    "ChatMessage": {
+      "title": "Chat Message",
+      "description": "Sub-collection document for messages within a chat thread",
+      "type": "object",
+      "properties": {
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderAvatar": { "type": "string" },
+        "text": { "type": "string" },
+        "type": { "type": "string", "enum": ["text", "image", "video", "audio", "file"] },
+        "mediaUrl": { "type": "string" },
+        "replyToId": { "type": "string" },
+        "replyToText": { "type": "string" },
+        "status": { "type": "string", "enum": ["sent", "delivered", "seen"] },
+        "isDeleted": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["senderId", "text", "type", "status"]
+    },
+    "TypingStatus": {
+      "title": "Typing Status",
+      "description": "Indicator tracking live typing status in a chat thread",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "username": { "type": "string" },
+        "isTyping": { "type": "boolean" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["userId", "isTyping"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Stores user profile and role details"
+    },
+    "/usernames/{username}": {
+      "schema": "UsernameMapping",
+      "description": "Public mapping for username-to-email authentication lookup"
+    },
+    "/chats/{chatId}": {
+      "schema": "ChatThread",
+      "description": "Stores active 1-on-1 and group chat metadata"
+    },
+    "/chats/{chatId}/messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Stores messages within a specific chat thread"
+    },
+    "/chats/{chatId}/typing/{userId}": {
+      "schema": "TypingStatus",
+      "description": "Stores real-time typing indicators"
+    }
+  }
+}

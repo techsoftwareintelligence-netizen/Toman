@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper primitive
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Default Deny Catch-All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Username Mappings
+    match /usernames/{username} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // User Profiles
+    match /users/{userId} {
+      allow read, create, update, delete: if isSignedIn();
+    }
+
+    // Chat Threads
+    match /chats/{chatId} {
+      allow read, create, update, delete: if isSignedIn();
+
+      // Messages Sub-collection
+      match /messages/{messageId} {
+        allow read, create, update, delete: if isSignedIn();
+      }
+
+      // Typing Status Sub-collection
+      match /typing/{userId} {
+        allow read, write: if isSignedIn();
+      }
+    }
+
+    // WebRTC Real-Time Calling & Signaling
+    match /calls/{callId} {
+      allow read, create, update, delete: if isSignedIn();
+
+      match /callerCandidates/{candidateId} {
+        allow read, create, update, delete: if isSignedIn();
+      }
+
+      match /calleeCandidates/{candidateId} {
+        allow read, create, update, delete: if isSignedIn();
+      }
+    }
+  }
+}
